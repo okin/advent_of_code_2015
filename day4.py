@@ -7,7 +7,7 @@ def mine_advent_coin(secret, zeroes=5):
     starting_zeroes = zeroes * '0'
     with multiprocessing.Pool(processes=2) as pool:
         in_gen = generate_input(secret)
-        for number, found_hash in pool.imap(compute, in_gen, chunksize=128):
+        for number, found_hash in pool.imap_unordered(compute, in_gen, chunksize=1024):
             if number % 1000 == 0:
                 print('.', end='')
             if found_hash.startswith(starting_zeroes):

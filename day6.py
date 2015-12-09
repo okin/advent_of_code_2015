@@ -16,7 +16,30 @@ def toggle(lightbulb):
     return not lightbulb
 
 
-def split_command(text):
+def action_factory(action):
+    if action == 'turn on':
+        return turn_on
+    elif action == 'turn off':
+        return turn_off
+    else:
+        return toggle
+
+
+def improved_action_factory(action):
+    if action == 'turn on':
+        return lambda x: x + 1
+    elif action == 'turn off':
+        def turn_down(lightbulb):
+            if lightbulb == 0:
+                return 0
+            else:
+                return lightbulb - 1
+        return turn_down
+    else:
+        return lambda x: x + 2
+
+
+def split_command(text, action_creation=action_factory):
     def coordinates_to_tuple(coordinates):
         x, y = coordinates.split(',')
         return int(x), int(y)
@@ -24,17 +47,12 @@ def split_command(text):
     pre, end_text = text.split(' through ')
     action, start_text = pre.rsplit(' ', 1)
 
-    if action == 'turn on':
-        action = turn_on
-    elif action == 'turn off':
-        action = turn_off
-    else:
-        action = toggle
+    action = action_creation(action)
     return Command(action, coordinates_to_tuple(start_text), coordinates_to_tuple(end_text))
 
 
 def generate_grid(width, height):
-    return [[False for _ in range(width)] for _ in range(height)]
+    return [[0 for _ in range(width)] for _ in range(height)]
 
 
 def count_activated_lamps(grid):
@@ -45,6 +63,9 @@ def count_activated_lamps(grid):
                 active += 1
 
     return active
+
+def sum_brightness(grid):
+    return sum(sum(column) for column in (row for row in grid))
 
 
 def process_command(grid, command):
@@ -385,3 +406,10 @@ if __name__ == '__main__':
         process_command(xmas_grid, command)
 
     print(count_activated_lamps(xmas_grid))
+
+    new_xmas_grid = generate_grid(1000, 1000)
+    for raw_command in commands:
+        command = split_command(raw_command, improved_action_factory)
+        process_command(new_xmas_grid, command)
+
+    print("Brightness sum: {}".format(sum_brightness(new_xmas_grid)))

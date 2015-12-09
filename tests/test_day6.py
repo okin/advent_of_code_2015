@@ -1,4 +1,5 @@
-from day6 import split_command, Command, turn_off, turn_on, toggle, generate_grid, count_activated_lamps, process_command, print_grid
+from day6 import (split_command, Command, turn_off, turn_on, toggle, generate_grid, count_activated_lamps,
+                  process_command, print_grid, sum_brightness, improved_action_factory)
 
 
 def test_splitting_actions():
@@ -29,19 +30,29 @@ def test_toggle():
 
 
 def test_work_on_grid():
-    testGrid = generate_grid(5, 5)
-    assert count_activated_lamps(testGrid) == 0
+    test_grid = generate_grid(5, 5)
+    assert count_activated_lamps(test_grid) == 0
 
-    process_command(testGrid, Command(toggle, (2, 2), (3, 3)))
-    print_grid(testGrid)
+    process_command(test_grid, Command(toggle, (2, 2), (3, 3)))
+    print_grid(test_grid)
 
-    assert 4 == count_activated_lamps(testGrid)
-    assert testGrid[2][2]
-    assert testGrid[2][3]
-    assert testGrid[3][2]
-    assert testGrid[3][3]
+    assert 4 == count_activated_lamps(test_grid)
+    assert test_grid[2][2]
+    assert test_grid[2][3]
+    assert test_grid[3][2]
+    assert test_grid[3][3]
 
-    process_command(testGrid, Command(toggle, (2, 2), (3, 3)))
-    print_grid(testGrid)
+    process_command(test_grid, Command(toggle, (2, 2), (3, 3)))
+    print_grid(test_grid)
 
-    assert 0 == count_activated_lamps(testGrid)
+    assert 0 == count_activated_lamps(test_grid)
+
+
+def test_working_on_grid_with_improved_instructions():
+    test_grid = generate_grid(1000, 1000)
+    process_command(test_grid, split_command("turn on 0,0 through 0,0", improved_action_factory))
+    assert 1 == sum_brightness(test_grid)
+
+    test_grid = generate_grid(1000, 1000)
+    process_command(test_grid, split_command("toggle 0,0 through 999,999", improved_action_factory))
+    assert 2000000 == sum_brightness(test_grid)

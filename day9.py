@@ -21,6 +21,19 @@ class PathFinder:
 
         return (start, end), distance
 
+    def calculate_longest_route(self):
+        longest_route = longest_distance = None
+        for route, distance in self.get_all_routes():
+            if longest_distance is None:
+                longest_distance = distance
+                longest_route = route
+
+            if longest_distance < distance:
+                longest_distance = distance
+                longest_route = route
+
+        return longest_route, longest_distance
+
     def calculate_shortest_route(self):
         short_route = short_distance = None
         for route, distance in self.get_all_routes():
@@ -86,5 +99,7 @@ Tristram to Arbre = 90"""
     p = PathFinder()
     p.parse(PUZZLE_INPUT.split('\n'))
     route, distance = p.calculate_shortest_route()
+    print("Short route {}: {}".format(' -> '.join(route), distance))
 
-    print("Route {}: {}".format(' -> '.join(route), distance))
+    route, distance = p.calculate_longest_route()
+    print("long route {}: {}".format(' -> '.join(route), distance))

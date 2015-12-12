@@ -52,4 +52,16 @@ def test_calculating_shortest_route():
     route, distance = p.calculate_shortest_route()
 
     assert distance == 605
-    assert route == ('London', 'Dublin', 'Belfast')
+    possible_routes = (('London', 'Dublin', 'Belfast'), ('Belfast', 'Dublin', 'London'))
+    assert route in possible_routes
+
+
+def test_calculating_longest_route():
+    p = PathFinder()
+    p.parse(EXAMPLE_INPUT.split('\n'))
+
+    route, distance = p.calculate_longest_route()
+
+    assert distance == 982
+    possible_routes = (('Dublin', 'London', 'Belfast'), ('Belfast', 'London', 'Dublin'))
+    assert route in possible_routes
